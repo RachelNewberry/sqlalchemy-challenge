@@ -21,7 +21,18 @@ Station = Base.classes.station
 
 session = Session(engine)
  
+latestDate = (session.query(Measurement.date)
+                .order_by(Measurement.date.desc())
+                .first())
+latestDate = list(np.ravel(latestDate))[0]
 
+latestDate = dt.datetime.strptime(latestDate, '%Y-%m-%d')
+latestYear = int(dt.datetime.strftime(latestDate, '%Y'))
+latestMonth = int(dt.datetime.strftime(latestDate, '%m'))
+latestDay = int(dt.datetime.strftime(latestDate, '%d'))
+
+yearBefore = dt.date(latestYear, latestMonth, latestDay) - dt.timedelta(days=365)
+yearBefore = dt.datetime.strftime(yearBefore, '%Y-%m-%d')
 
 @app.route("/")
 def welcome():
@@ -31,8 +42,8 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/datesearch/<startDate>"
-        f"/api/v1.0/datesearch/<startDate>/<endDate>"
+        f"/api/v1.0/datesearch/2015-05-30<br/>"
+        f"/api/v1.0/datesearch/2015-05-30/2016-01-30<br/>"
     )
 
 @app.route("/api/v1.0/precipitation")
